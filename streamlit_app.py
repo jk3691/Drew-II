@@ -46,7 +46,7 @@ else:
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ],
-            stream=False,
+            stream=True,
         )
 
         # Stream the response to the chat using `st.write_stream`, then store it in 
