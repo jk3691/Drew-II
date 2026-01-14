@@ -30,7 +30,7 @@ if prompt := st.chat_input("Message Drew-II..."):
         st.markdown(prompt)
 
     # Generate AI response
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant")
         stream = client.chat.completions.create(
             model="gpt-4o", # or your preferred model
             messages=[
