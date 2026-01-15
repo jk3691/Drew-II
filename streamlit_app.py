@@ -31,7 +31,7 @@ if prompt := st.chat_input("Message Drew-II..."):
 
     # Generate AI response
     with st.chat_message("assistant"):
-        stream =true client.chat.completions.create(
+        stream=true,client.chat.completions.create(
             model="gpt-4o", # or your preferred model
             messages=[
                 {"role": m["role"], "content": m["content"]}
