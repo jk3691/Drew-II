@@ -10,4 +10,4 @@ if st.button("Test AI"):
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello! Are you working?"}]
  
-    st.write(response.choices[0].message.content)
+   st.write(response.choices[0].message.content)
