@@ -1,38 +1,15 @@
 import streamlit as st
-import google.generativeai as genai
+from openai import OpenAI
 
-# 1. Setup API Key
-try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-except KeyError:
-    st.error("API Key not found. Please check your secrets configuration.")
+# Initialize the client using Streamlit secrets
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-st.title("AI Assistant Test")
+st.title("AI Assistant")
 
-# 2. Initialize the Model
-model = genai.GenerativeModel('gemini-1.5-flash')
-
-# 3. Simple Chat Interface
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat history
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# 4. The First Message Test
-if prompt := st.chat_input("Say hello to your AI..."):
-    # Add user message to history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    # Generate response
-    with st.chat_message("assistant"):
-        try:
-            response = model.generate_content(prompt)
-            st.markdown(response.text)
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
-        except Exception as e:
-            st.error(f"Error: {e}")
+# Test message
+if st.button("Test AI"):
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": "Hello! Are you working?"}]
+    )
+    st.write(response.choices[0].message.content)
