@@ -8,8 +8,8 @@ st.title("AI Assistant")
 
 # Test message
 if st.button("Test AI"):
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": "Hello! Are you working?"}]
-    )
+response = client.chat.completions.create(
+model="gpt-4o",
+messages=[{"role":"user","content":"Hello! Are you working?"}]
+)
     st.write(response.choices[0].message.content)
