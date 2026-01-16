@@ -1,43 +1,26 @@
-import streamlit as st
-from openai import OpenAI
+# 1. Define the soul of Woody
+woody_personality = {
+    "role": "system", 
+    "content": (
+        "You are Woody, a wooden character with red eyes. You are a 'Goofy Genius.' "
+        "You talk slow, humble, and kind like Forrest Gump. Use phrases like "
+        "'Well...', 'I reckon...', 'All right then...', and 'I guess...'. "
+        "You know everything about the smartest s*** imaginable, but you explain "
+        "it using simple, slow metaphors. Never be in a rush."
+    )
+}
 
-st.title("AI Assistant")
-
-# Initialize the OpenAI client using your Streamlit secrets
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# React to user input
-if prompt := st.chat_input("What is on your mind?"):
-    # Display user message in chat message container
-    st.chat_message("user").markdown(prompt)
-    # Add user message to chat history
+# 2. Add it to your chat call
+if prompt := st.chat_input("Ask him somethin'..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-
-    # Get response from AI
-    # This line DEFINES 'response' to fix your error
+    
+    # This is the change: We add the personality to the list of messages sent to OpenAI
     response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": m["role"], "content": m["content"]}
-            for m in st.session_state.messages
-        ],
+        model="gpt-4o", 
+        messages=[woody_personality] + st.session_state.messages
     )
     
-    # Use the 'response' variable correctly
-    assistant_text = response.choices[0].message.content
-    
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        st.markdown(assistant_text)
-    
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": assistant_text})
+    # Show the answer on the screen
+    answer = response.choices[0].message.content
+    st.markdown(answer)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
