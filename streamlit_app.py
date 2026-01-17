@@ -1,3 +1,5 @@
+import io
+from streamlit_mic_recorder import mic_recorder
 import streamlit as st
 from openai import OpenAI
 
@@ -44,4 +46,28 @@ if prompt := st.chat_input("Ask him somethin'..."):
         st.markdown(answer)
     
     # Add assistant response to history
-    st.session_state.messages.append({"role": "assistant", "content": answer})
+    st.session_state.messages.append({"role": "assistant", "content": answer})st.write("---")
+audio = mic_recorder(
+    start_prompt="Click to Talk 🎤",
+    stop_prompt="Stop & Send 🛑",
+    key='recorder'
+)
+
+if audio:
+    audio_bytes = audio['bytes']
+    with st.spinner("Listening..."):
+        audio_file = io.BytesIO(audio_bytes)
+        audio_file.name = "audio.wav"
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=audio_file
+        )
+        user_text = transcript.text
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": user_text}]
+        )
+        st.session_state.messages.append({"role": "user", "content": user_text})
+        st.session_state.messages.append({"role": "assistant", "content": response.choices[0].message.content})
+        st.rerun()
+
