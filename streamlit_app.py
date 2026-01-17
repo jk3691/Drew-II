@@ -11,7 +11,7 @@ woody_personality = {
 }
 
 # 2. Add it to your chat call
-if prompt := st.chat_input("Ask him somethin'..."):
+if prompt:= st.chat_input("Ask him somethin'..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
     # This is the change: We add the personality to the list of messages sent to OpenAI
