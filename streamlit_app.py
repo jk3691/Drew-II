@@ -2,20 +2,12 @@ import streamlit as st
 from openai import OpenAI
 from PIL import Image
 import base64
-from streamlit_mic_recorder import mic_recorder
-
-# 1. Setup the Brand (The Face of Drew)
-st.set_page_config(page_title="Drew AI", page_icon="🌳")
-
-col1, col2 = st.columns([1, 4])
-with col1:
-    try:
-        import streamlit as st
 import requests
 import time
+from streamlit_mic_recorder import mic_recorder
 
-# 1. Start the page properly
-st.set_page_config(page_title="Drew AI", page_icon="🤖")
+# 1. Setup the Brand (The Face of Drew) - ONLY ONCE and AT THE TOP
+st.set_page_config(page_title="Drew AI", page_icon="🌳")
 
 # 2. This function talks to D-ID to make the video
 def generate_drew_video(text):
@@ -28,6 +20,11 @@ def generate_drew_video(text):
         "script": {
             "type": "text",
             "provider": {"type": "microsoft", "voice_id": "en-US-GuyNeural"},
+            "input": text # You'll need this line to tell it what to say!
+        }
+    }
+    # ... the rest of your D-ID logic goes here
+
             "input": text
         },
         "source_url": "https://raw.githubusercontent.com/your-repo/main/drew_face.png" # Link to Drew's photo
