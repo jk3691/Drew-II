@@ -11,7 +11,7 @@ def update(frame):
     return line,
 
 ani = animation.FuncAnimation(fig, update, frames=100, blit=True)
-ani.save('sine_wave.gif', writer='imagemagick')import streamlit as st
+ani.save('sine_wave.gif', writer='imagemagick') import streamlit as st
 import requests
 import time
 import base64
