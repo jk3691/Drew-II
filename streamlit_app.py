@@ -28,6 +28,7 @@ def generate_drew_video(text):
     response = requests.post(url, json=payload, headers=headers)
     return response.json()
 
+col1, col2 = st.columns([1, 2])
 
 with col2:
     st.title("Drew AI")
