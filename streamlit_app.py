@@ -1,12 +1,12 @@
 import streamlit as st
-from openai import OpenAI
-from PIL import Image
-import base64
 import requests
 import time
+import base64
+from openai import OpenAI
+from PIL import Image
 from streamlit_mic_recorder import mic_recorder
 
-# 1. Setup the Brand (The Face of Drew) - ONLY ONCE and AT THE TOP
+# 1. Setup the Brand (The Face of Drew)
 st.set_page_config(page_title="Drew AI", page_icon="🌳")
 
 # 2. This function talks to D-ID to make the video
@@ -19,20 +19,15 @@ def generate_drew_video(text):
     payload = {
         "script": {
             "type": "text",
-            "provider": {"type": "microsoft", "voice_id": "en-US-GuyNeural"},
-                    payload = {
-            "script": {
-                "type": "text",
-                "provider": {"type": "microsoft", "voice_id": "en-US-GuyNeural"},
-                "input": text
-            },
-            "source_url": "https://raw.githubusercontent.com/your-repo/main/drew_face.png"
+            "input": text,
+            "provider": {"type": "microsoft", "voice_id": "en-US-GuyNeural"}
         }
-
-        "source_url": "https://raw.githubusercontent.com/your-repo/main/drew_face.png" # Link to Drew's photo
     }
-    res = requests.post(url, json=payload, headers=headers)
-    return res.json().get("id")
+    
+    # This sends the request and gets the reply
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()
+
 
 with col2:
     st.title("Drew AI")
