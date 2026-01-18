@@ -1,89 +1,72 @@
 import streamlit as st
 from openai import OpenAI
+from PIL import Image
+import base64
+from streamlit_mic_recorder import mic_recorder
 
-# 1. Setup the Brand (The Face)
+# 1. Setup the Brand (The Face of Drew)
+st.set_page_config(page_title="Drew AI", page_icon="🌳")
+
 col1, col2 = st.columns([1, 4])
 with col1:
-    st.image("drew_face.png", width=100) # Ensure your image is named this in GitHub
+    try:
+        # Looks for the file you renamed to drew_face.png
+        st.image("drew_face.png", width=120)
+    except:
+        st.write("👤") 
 with col2:
     st.title("Drew AI")
+    st.write("Take your time. I ain't in no rush.")
 
-# 2. The Brains (The API Connection)
-# This looks for the 'OPENAI_API_KEY' you set in Streamlit Secrets
+# 2. Connection & Personality
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# 3. The Personality (The System Prompt)
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "system", "content": "You are Drew. You talk slow like Forrest Gump but you know everything. You are kind, patient, and use simple metaphors."}
-    ]
-
-# --- Now your existing chat loop begins ---
-
-
-st.title("Talk with Drew")
-
-# --- Image Upload Section ---
-uploaded_file = st.file_uploader("Show Drew a picture...", type=["jpg", "jpeg", "png"])
-if uploaded_file is not None:
-    # Display the image so you can see it's there
-    image = Image.open(uploaded_file)
-    st.image(image, caption='What you showed Drew', use_container_width=True)
-
-# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 2. Define the soul of Drew
+# Updated Soul: Slow country accent, genius mind, no "Gump" references.
 drew_personality = {
-    "role": "system",
+    "role": "system", 
     "content": (
-        "You are Drew, a character with red eyes. You are a 'Goofy Genius.' "
-        "You talk slow, humble, and kind like Forrest Gump. Use phrases like "
-        "'Well...', 'I reckon...', 'All right then...', and 'I guess...'. "
-        "You know everything about the smartest s*** imaginable, but you explain "
-        "it using simple, slow metaphors. Never be in a rush."
+        "You are Drew. You have a thick, slow country accent and use phrases like 'I reckon' and 'Well now'. "
+        "You are a genius who knows everything about complex science, tech, and math, but you explain it "
+        "slowly using simple metaphors. You are never in a hurry. You are kind and patient, but brilliant."
     )
 }
 
-# 3. Display chat messages from history
+# 3. Input Tools
+uploaded_file = st.file_uploader("Show Drew a picture...", type=["jpg", "jpeg", "png"])
+audio = mic_recorder(start_prompt="⏺️ Record", stop_prompt="⏹️ Stop", key='recorder')
+
+# 4. Chat History Display
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        if isinstance(message["content"], list):
+            st.markdown(message["content"][0]["text"])
+        else:
+            st.markdown(message["content"])
 
-# --- Mic Recorder Section ---
-st.write("Or tell Drew something:")
-audio = mic_recorder(start_prompt="⏺️ Record", stop_prompt="⏹️ Stop", key='recorder')
-# 4. Chat Input and Logic
+# 5. Chat Logic
 if prompt := st.chat_input("Say something to Drew..."):
-    # Add user message to history
-    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Prepare the message for the AI
-    content = [{"type": "text", "text": prompt}]
+    message_content = [{"type": "text", "text": prompt}]
     
-    # If there's an image, add it to the request
-    if uploaded_file is not None:
+    if uploaded_file:
         base64_image = base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
-        content.append({
-            "type": "image_url",
+        message_content.append({
+            "type": "image_url", 
             "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
         })
 
-    # Get Drew's response
+    st.session_state.messages.append({"role": "user", "content": message_content})
+
     with st.chat_message("assistant"):
         response = client.chat.completions.create(
-            model="gpt-4o", # This model can see images
-            messages=[
-                drew_personality,
-                *st.session_state.messages[:-1], # Past history
-                {"role": "user", "content": content} # Current message + Image
-            ]
+            model="gpt-4o",
+            messages=[drew_personality] + [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
         )
         full_response = response.choices[0].message.content
         st.markdown(full_response)
-    
-    # Save Drew's answer to history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
