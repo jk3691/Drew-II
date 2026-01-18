@@ -10,10 +10,31 @@ st.set_page_config(page_title="Drew AI", page_icon="🌳")
 col1, col2 = st.columns([1, 4])
 with col1:
     try:
-        # Looks for the file you renamed to drew_face.png
-        st.image("drew_face.png", width=120)
-    except:
-        st.write("👤") 
+        import streamlit as st
+import requests
+import time
+
+# 1. Start the page properly
+st.set_page_config(page_title="Drew AI", page_icon="🤖")
+
+# 2. This function talks to D-ID to make the video
+def generate_drew_video(text):
+    url = "https://api.d-id.com/talks"
+    headers = {
+        "Authorization": f"Basic {st.secrets['DID_API_KEY']}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "script": {
+            "type": "text",
+            "provider": {"type": "microsoft", "voice_id": "en-US-GuyNeural"},
+            "input": text
+        },
+        "source_url": "https://raw.githubusercontent.com/your-repo/main/drew_face.png" # Link to Drew's photo
+    }
+    res = requests.post(url, json=payload, headers=headers)
+    return res.json().get("id")
+
 with col2:
     st.title("Drew AI")
     st.write("Take your time. I ain't in no rush.")
