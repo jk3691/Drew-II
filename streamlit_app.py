@@ -1,3 +1,18 @@
+# 3. The part where we talk to Drew
+user_input = st.text_input("Say something to Drew:", "Hello there!")
+
+if st.button("Send message"):
+    with st.spinner("Drew is thinking... like a box of chocolates..."):
+        # This calls the function you wrote above
+        result = generate_drew_video(user_input)
+        
+        # This shows the link to the video D-ID creates
+        if "id" in result:
+            st.success("Drew is getting ready to talk!")
+            st.write(result)
+        else:
+            st.error("Something went wrong with the connection.")
+            st.write(result)
 import streamlit as st
 import requests
 import time
