@@ -1,12 +1,25 @@
-import io
-import base64
-from streamlit_mic_recorder import mic_recorder
 import streamlit as st
 from openai import OpenAI
-from PIL import Image
 
-# 1. Setup the Client (Make sure your key is in Streamlit secrets)
+# 1. Setup the Brand (The Face)
+col1, col2 = st.columns([1, 4])
+with col1:
+    st.image("drew_face.png", width=100) # Ensure your image is named this in GitHub
+with col2:
+    st.title("Drew AI")
+
+# 2. The Brains (The API Connection)
+# This looks for the 'OPENAI_API_KEY' you set in Streamlit Secrets
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+# 3. The Personality (The System Prompt)
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "system", "content": "You are Drew. You talk slow like Forrest Gump but you know everything. You are kind, patient, and use simple metaphors."}
+    ]
+
+# --- Now your existing chat loop begins ---
+
 
 st.title("Talk with Drew")
 
