@@ -33,7 +33,7 @@ def generate_drew_video(text):
 
 # 3. The main part of the porch
 st.title("Talking with Drew")
-st.write("I'm not a smart man, but I know what love is... and I know how to use an API.")
+st.write("Yup, take your time.... Reckon I ain't got nothing to else to do.")
 
 # Input for the message
 user_input = st.text_input("What should Drew say?", "Hello there, my name is Drew.")
