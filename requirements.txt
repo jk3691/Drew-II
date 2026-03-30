@@ -3,4 +3,4 @@ streamlit-mic-recorder
 openai
 python-dotenv
 pydub
-
+D-ID
